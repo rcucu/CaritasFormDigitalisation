@@ -5,7 +5,6 @@ from pathlib import Path
 import pandas as pd
 
 
-
 def set_language(lang):
     fr = ['Données Personnelles',
           'Conditions générales faisant office de garantie et de l acception du matériel par le bénéficiaire',
@@ -36,26 +35,24 @@ def set_language(lang):
 
 
 class Window(Frame):
-    def __init__(self, w_number, *args, **kwargs):
-        Frame.__init__(self, bg='', *args, **kwargs)
+    def __init__(self, parent, w_number):
+        super().__init__(parent, bg='')
+        self.parent = parent
         self.number = w_number
         self.posx_1stcol = 400
         self.posx_1strow = 200
 
-        #img1 = Image.open(r'C:\Users\rcucu\Documents\Bénévolat\Caritas\code\img_bkg.jpg').resize((w_screen, h_screen))
-        #img2 = ImageTk.PhotoImage(img1)
-
-        background_label = Label(self, image=img2)
-        background_label['anchor'] = 'nw'
-        background_label.place(x=0, y=0, relwidth=1, relheight=1)
-        background_label.pack(side='top', fill='both', expand=True)
+        bgd_label = Label(self, image=img_bgd)
+        bgd_label['anchor'] = 'nw'
+        bgd_label.place(x=0, y=0, relwidth=1, relheight=1)
+        bgd_label.pack(side='top', fill='both', expand=True)
 
     def set_parent_current_page(self):
-        Frame.current_page = self.number
-        print(Frame.current_page)
+        self.parent.current_page = self.number
+        print(self.parent.current_page)
 
-    def save_data(self):
-        Frame.save_data()
+    def get_data(self):
+        self.parent.save_data()
 
     def show(self):
         self.set_parent_current_page()
@@ -73,9 +70,8 @@ class Window(Frame):
 
 
 class FamilialSituationAgeWindow(Window):
-    def __init__(self, w_number=2, *args, **kwargs):
-        self.number = w_number
-        Window.__init__(self, self.number, *args, **kwargs)
+    def __init__(self, parent, w_number):
+        super().__init__(parent, w_number)
         self.familial_label = Label(self, text=set_language(lang)[15])
         self.familial_label.place(x=self.posx_1stcol, y=self.posx_1strow)
         self.familial_box = ttk.Combobox(self, values=set_language(lang)[17:22])
@@ -88,9 +84,8 @@ class FamilialSituationAgeWindow(Window):
 
 
 class BenefitsWindow(Window):
-    def __init__(self, w_number=3, *args, **kwargs):
-        self.number = w_number
-        Window.__init__(self, self.number, *args, **kwargs)
+    def __init__(self, parent, w_number):
+        super().__init__(parent, w_number)
         self.social_benefits_label = Label(self, text=set_language(lang)[22])
         self.social_benefits_label.place(x=self.posx_1stcol, y=self.posx_1strow)
         self.social_benefits = ttk.Combobox(self, values=set_language(lang)[23:25])
@@ -118,9 +113,8 @@ class BenefitsWindow(Window):
 
 
 class PersonalDataWindow(Window):
-    def __init__(self, w_number=1, *args, **kwargs):
-        self.number = w_number
-        Window.__init__(self, self.number, *args, **kwargs)
+    def __init__(self, parent, w_number):
+        super().__init__(parent, w_number)
 
         self.lastName_lab = Label(self, text=set_language(lang)[9])
         self.lastName_lab.place(x=self.posx_1stcol, y=self.posx_1strow)
@@ -150,20 +144,19 @@ class PersonalDataWindow(Window):
 
 
 class SignatureWindow(Window):
-
-    def __init__(self, w_number, filename, *args, **kwargs):
-        Window.__init__(self, w_number, *args, **kwargs)
+    def __init__(self, parent, w_number, filename):
+        super().__init__(parent, w_number)
         self.filename = filename
         self.posx, self.posy = 50, 300
         self.sizex, self.sizey = 600, 200
         self.xold, self.yold = None, None
         self.b1 = 'up'
-        self.drawing_area = Canvas(self, width=self.sizex, height=self.sizey, bg='white', **kwargs)
+        self.drawing_area = Canvas(self, width=self.sizex, height=self.sizey, bg='white')
         self.drawing_area.place(x=self.posx, y=self.posy)
         self.drawing_area.bind('<Motion>', self.motion)
         self.drawing_area.bind('<ButtonPress-1>', self.b1down)
         self.drawing_area.bind('<ButtonRelease-1>', self.b1up)
-        self.butt_done = Button(self, text=set_language(lang)[6], width=10, command=self.save, bg='white')
+        self.butt_done = Button(self, text=set_language(lang)[6], width=10, command=self.save_sig, bg='white')
         self.butt_done.place(x=(self.sizex / 6), y=2.5 * self.sizey + 20)
         self.butt_erase = Button(self, text=set_language(lang)[7], width=10, command=self.clear, bg='white')
         self.butt_erase.place(x=(self.sizex / 6) + 80, y=2.5 * self.sizey + 20)
@@ -205,14 +198,13 @@ class SignatureWindow(Window):
         self.xold = event.x
         self.yold = event.y
 
-    def save_data(self):
-        Window.save_data()
+    def save_sig(self):
+        self.save_data()
 
 
 class BeneficiarySignature(SignatureWindow):
-    def __init__(self, w_number=4, *args, **kwargs):
-        self.number = w_number
-        SignatureWindow.__init__(self, self.number, 'sig_bene.jpg', *args, **kwargs)
+    def __init__(self, parent, w_number):
+        super().__init__(parent, w_number, 'sig_bene.jpg')
         self.label = Label(self, text=set_language(lang)[1], font=("bold", 15), bg='white')
         self.label.place(x=50, y=13)
         self.label2 = Label(self, text=set_language(lang)[2], font=("bold", 13), bg='white')
@@ -228,9 +220,8 @@ class BeneficiarySignature(SignatureWindow):
 
 
 class TechnicianSignature(SignatureWindow):
-    def __init__(self, w_number=5, *args, **kwargs):
-        self.number = w_number
-        SignatureWindow.__init__(self, self.number, 'sig_tech.jpg', *args, **kwargs)
+    def __init__(self, parent, w_number):
+        super().__init__(parent, w_number, 'sig_tech.jpg')
         #TODO: rajouter box précisant si ordi fix ou portable
 
         self.nb_PC_label = Label(self, text=set_language(lang)[29])
@@ -246,7 +237,7 @@ class TechnicianSignature(SignatureWindow):
         label_bs = Label(self, text=set_language(lang)[8], font=("bold", 13), background='white')
         label_bs.place(x=50, y=263)
 
-        button_save_data = Button(self, text=set_language(lang)[31], command=SignatureWindow.save_data, bg='#99EDC3')
+        button_save_data = Button(self, text=set_language(lang)[31], command=self.get_data, bg='#99EDC3')
         button_save_data.place(x=900, y=500)
 
         self.pack(side="top", fill="both", expand=True)
@@ -254,10 +245,8 @@ class TechnicianSignature(SignatureWindow):
 
 
 class WelcomeWindow(Window):
-    def __init__(self, w_number=0, *args, **kwargs):
-        self.number = w_number
-
-        Window.__init__(self, self.number, *args, **kwargs)
+    def __init__(self, parent, w_number):
+        super().__init__(parent, w_number)
         self.welcome_label = Label(self, text='Welcome !', font=300)
         self.welcome_label.place(x=self.posx_1stcol, y=100)
 
@@ -266,18 +255,19 @@ class WelcomeWindow(Window):
 
 
 class MainView(Frame):
-    def __init__(self, *args, **kwargs):
-        Frame.__init__(self, padx=1, pady=1, *args, **kwargs)
+    def __init__(self, parent, language, *args, **kwargs):
+        super().__init__(parent, padx=1, pady=1, *args, **kwargs)
+        self.parent = parent
+        self.language = language
         self.current_page = 0
-        self.language = 'Francais'
 
-        self.w_welcome = WelcomeWindow(0)
-        self.w1 = PersonalDataWindow(1)
-        self.w2 = FamilialSituationAgeWindow(2)
-        self.w3 = BenefitsWindow(3)
+        self.w_welcome = WelcomeWindow(self, w_number=0)
+        self.w1 = PersonalDataWindow(self, w_number=1)
+        self.w2 = FamilialSituationAgeWindow(self, w_number=2)
+        self.w3 = BenefitsWindow(self, w_number=3)
 
-        self.w22 = BeneficiarySignature(4)
-        self.w23 = TechnicianSignature(5)
+        self.w22 = BeneficiarySignature(self, w_number=4)
+        self.w23 = TechnicianSignature(self, w_number=5)
         self.list_windows = [self.w_welcome, self.w1, self.w2, self.w3, self.w22, self.w23]
 
         buttonframe = Frame(self, background='white')
@@ -303,7 +293,6 @@ class MainView(Frame):
         b3 = Button(bottombuttonframe, text="Suivant", bg='#3DED97', command=self.go_next_window)
         b4 = Button(bottombuttonframe, text="En arrière", bg='#3DED97', command=self.go_previous_window)
 
-        background_label.pack(side='top', fill='both', expand=True)
         b00.pack(side='left')
         b0.pack(side='left')
         b01.pack(side='left')
@@ -342,7 +331,6 @@ class MainView(Frame):
             current_window = [w for w in self.list_windows if w.number == self.current_page][0]
             current_window.show()
 
-
     def save_data(self):
         path_dir = Path(r'C:\Users\rcucu\Documents\Bénévolat\Caritas\code\data')
         data = pd.DataFrame(data=[self.w1.lastName.get(), self.w1.firstName.get(),
@@ -357,26 +345,25 @@ class MainView(Frame):
 if __name__ == '__main__':
 
     path_dir = Path(r'C:\Users\rcucu\Documents\Bénévolat\Caritas\code')
-
     lang = 'fr'
     app = Tk()
     app.title('UserForm')
     app.wm_geometry('')
-    #
-    # app.attributes('-fullscreen', 1)  # make the root window fullscreen
+
+    #form.attributes('-fullscreen', 1)  # make the root window fullscreen
     w_screen = app.winfo_screenwidth()
     h_screen = app.winfo_screenheight()
+    main_frame = Frame(app)
 
-    img1 = Image.open(path_dir / 'img_bkg3.jpg').resize((w_screen, h_screen))
-    img2 = ImageTk.PhotoImage(img1)
+    img_bgd_ref = Image.open(path_dir / 'img_bkg3.jpg').resize((w_screen, h_screen))
+    img_bgd = ImageTk.PhotoImage(img_bgd_ref)
+    bgd_label = Label(main_frame, image=img_bgd)
+    bgd_label['anchor'] = 'nw'
+    bgd_label.place(x=0, y=0, relwidth=1, relheight=1)
 
-    background_label = Label(app, image=img2)
-    background_label['anchor'] = 'nw'
-    background_label.place(x=0, y=0, relwidth=1, relheight=1)
+    form = MainView(app, lang)
 
-    main = MainView(background_label)
-
-    main.pack(side="top", fill="both", expand=True)
+    form.pack(side="top", fill="both", expand=True)
 
     app.mainloop()
 
