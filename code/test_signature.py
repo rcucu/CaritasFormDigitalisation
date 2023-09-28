@@ -1,4 +1,6 @@
 from tkinter import Tk, Frame, Button, Label, Canvas, Entry, LabelFrame, ttk, Spinbox, PhotoImage
+
+import numpy as np
 from PIL import Image, ImageDraw, ImageTk
 from datetime import datetime
 from pathlib import Path
@@ -19,10 +21,12 @@ def set_language(lang):
           'Lausanne, le ____________',
           'Fini !', 'Effacer',
           'Technicien: par sa signature, le technicien certifie avoir aidé le bénéficiaire à remplir correctement le questionnaire du sondage, '
-          'transmis les informations sur les points (1) (2) de ce document.','Nom:', 'Prénom:' , 'Rue + nr:',
+          'transmis les informations sur les points (1) (2) de ce document.', 'Nom:', 'Prénom:', 'Rue + nr:',
           'NPA + Ville:', 'n° Tél:', 'Email:', 'Situation familiale', 'Age', 'Marié(e)', 'Divorcé(e)',
-          'Célibataire', 'Séparé(e)', ' Veuf(ve)', 'Prestations sociales', 'Oui', 'Non', 'CSR de:', 'Année d inscription', 'Assist. social:',
-          'Avez-vous déjà suivi des prestations en informatique chez nous ou ailleurs (cours, ateliers, etc) ?', 'N° PC:', 'N° Ecran:',
+          'Célibataire', 'Séparé(e)', ' Veuf(ve)', 'Prestations sociales', 'Oui', 'Non', 'CSR de:',
+          'Année d inscription', 'Assist. social:',
+          'Avez-vous déjà suivi des prestations en informatique chez nous ou ailleurs (cours, ateliers, etc) ?',
+          'N° PC:', 'N° Ecran:',
           'Sauvegarder les données']
     eng = ['Personnal data', 'Done !', 'Clean']
 
@@ -30,7 +34,8 @@ def set_language(lang):
 
     return dict_lang[lang]
 
-#TODO: paragraphe parlant expliquant que par la signature, le bénéficiaire accepte
+
+# TODO: paragraphe parlant expliquant que par la signature, le bénéficiaire accepte
 # que Caritas annonymise les données et les transmettent au canton
 
 
@@ -75,12 +80,15 @@ class FamilialSituationAgeWindow(Window):
         self.familial_label = Label(self, text=set_language(lang)[15])
         self.familial_label.place(x=self.posx_1stcol, y=self.posx_1strow)
         self.familial_box = ttk.Combobox(self, values=set_language(lang)[17:22])
-        self.familial_box.place(x=self.posx_1stcol, y=self.posx_1strow+30)
+        self.familial_box.place(x=self.posx_1stcol, y=self.posx_1strow + 30)
 
         self.age_label = Label(self, text=set_language(lang)[16])
-        self.age_label.place(x=self.posx_1stcol+300, y=self.posx_1strow)
+        self.age_label.place(x=self.posx_1stcol + 300, y=self.posx_1strow)
         self.age_box = Spinbox(self, from_=18, to=110)
-        self.age_box.place(x=self.posx_1stcol+300, y=self.posx_1strow+30)
+        self.age_box.place(x=self.posx_1stcol + 300, y=self.posx_1strow + 30)
+
+    def get_all_entries(self):
+        return np.array([self.familial_box.get(), self.age_box.get()])
 
 
 class BenefitsWindow(Window):
@@ -89,27 +97,31 @@ class BenefitsWindow(Window):
         self.social_benefits_label = Label(self, text=set_language(lang)[22])
         self.social_benefits_label.place(x=self.posx_1stcol, y=self.posx_1strow)
         self.social_benefits = ttk.Combobox(self, values=set_language(lang)[23:25])
-        self.social_benefits.place(x=self.posx_1stcol, y=self.posx_1strow+30)
+        self.social_benefits.place(x=self.posx_1stcol, y=self.posx_1strow + 30)
 
         self.CSR_lab = Label(self, text=set_language(lang)[25])
-        self.CSR_lab.place(x=self.posx_1stcol+300, y=self.posx_1strow)
+        self.CSR_lab.place(x=self.posx_1stcol + 300, y=self.posx_1strow)
         self.CSR_box = ttk.Combobox(self, values=['Vaud', 'Yverdon', 'Neuchatel'])
-        self.CSR_box.place(x=self.posx_1stcol+300, y=self.posx_1strow+30)
+        self.CSR_box.place(x=self.posx_1stcol + 300, y=self.posx_1strow + 30)
 
         self.subscrip_year_lab = Label(self, text=set_language(lang)[26])
-        self.subscrip_year_lab.place(x=self.posx_1stcol, y=self.posx_1strow+60)
+        self.subscrip_year_lab.place(x=self.posx_1stcol, y=self.posx_1strow + 60)
         self.subscrip_year = Spinbox(self, from_=1970, to=datetime.now().year)
-        self.subscrip_year.place(x=self.posx_1stcol, y=self.posx_1strow+90)
+        self.subscrip_year.place(x=self.posx_1stcol, y=self.posx_1strow + 90)
 
         self.social_assist_label = Label(self, text=set_language(lang)[27])
-        self.social_assist_label.place(x=self.posx_1stcol+300, y=self.posx_1strow+60)
+        self.social_assist_label.place(x=self.posx_1stcol + 300, y=self.posx_1strow + 60)
         self.social_assist = Entry(self)
-        self.social_assist.place(x=self.posx_1stcol+300, y=self.posx_1strow+90)
+        self.social_assist.place(x=self.posx_1stcol + 300, y=self.posx_1strow + 90)
 
         self.it_benefits_label = Label(self, text=set_language(lang)[28])
-        self.it_benefits_label.place(x=self.posx_1stcol, y=self.posx_1strow+120)
+        self.it_benefits_label.place(x=self.posx_1stcol, y=self.posx_1strow + 120)
         self.it_benefits = ttk.Combobox(self, values=set_language(lang)[23:25])
-        self.it_benefits.place(x=self.posx_1stcol,  y=self.posx_1strow+140)
+        self.it_benefits.place(x=self.posx_1stcol, y=self.posx_1strow + 140)
+
+    def get_all_entries(self):
+        return np.array([self.social_benefits.get(), self.CSR_box.get(), self.subscrip_year.get(),
+                         self.social_assist.get(), self.it_benefits.get()])
 
 
 class PersonalDataWindow(Window):
@@ -119,28 +131,32 @@ class PersonalDataWindow(Window):
         self.lastName_lab = Label(self, text=set_language(lang)[9])
         self.lastName_lab.place(x=self.posx_1stcol, y=self.posx_1strow)
         self.firstName_lab = Label(self, text=set_language(lang)[10])
-        self.firstName_lab.place(x=self.posx_1stcol+300, y=self.posx_1strow)
+        self.firstName_lab.place(x=self.posx_1stcol + 300, y=self.posx_1strow)
         self.street_lab = Label(self, text=set_language(lang)[11])
-        self.street_lab.place(x=self.posx_1stcol, y=self.posx_1strow+60)
+        self.street_lab.place(x=self.posx_1stcol, y=self.posx_1strow + 60)
         self.town_lab = Label(self, text=set_language(lang)[12])
-        self.town_lab.place(x=self.posx_1stcol+300, y=self.posx_1strow+60)
+        self.town_lab.place(x=self.posx_1stcol + 300, y=self.posx_1strow + 60)
         self.phone_lab = Label(self, text=set_language(lang)[13])
-        self.phone_lab.place(x=self.posx_1stcol, y=self.posx_1strow+120)
+        self.phone_lab.place(x=self.posx_1stcol, y=self.posx_1strow + 120)
         self.mail_lab = Label(self, text=set_language(lang)[14])
-        self.mail_lab.place(x=self.posx_1stcol+300, y=self.posx_1strow+120)
+        self.mail_lab.place(x=self.posx_1stcol + 300, y=self.posx_1strow + 120)
 
         self.lastName = Entry(self)
-        self.lastName.place(x=self.posx_1stcol, y=self.posx_1strow+30)
+        self.lastName.place(x=self.posx_1stcol, y=self.posx_1strow + 30)
         self.firstName = Entry(self)
-        self.firstName.place(x=self.posx_1stcol+300, y=self.posx_1strow+30)
+        self.firstName.place(x=self.posx_1stcol + 300, y=self.posx_1strow + 30)
         self.street = Entry(self)
-        self.street.place(x=self.posx_1stcol, y=self.posx_1strow+90)
+        self.street.place(x=self.posx_1stcol, y=self.posx_1strow + 90)
         self.town = Entry(self)
-        self.town.place(x=self.posx_1stcol+300, y=self.posx_1strow+90)
+        self.town.place(x=self.posx_1stcol + 300, y=self.posx_1strow + 90)
         self.phone = Entry(self)
-        self.phone.place(x=self.posx_1stcol, y=self.posx_1strow+150)
+        self.phone.place(x=self.posx_1stcol, y=self.posx_1strow + 150)
         self.mail = Entry(self)
-        self.mail.place(x=self.posx_1stcol+300, y=self.posx_1strow+150)
+        self.mail.place(x=self.posx_1stcol + 300, y=self.posx_1strow + 150)
+
+    def get_all_entries(self):
+        return np.array([self.lastName.get(), self.firstName.get(), self.street.get(),
+                         self.town.get(), self.phone.get(), self.mail.get()])
 
 
 class SignatureWindow(Window):
@@ -199,7 +215,7 @@ class SignatureWindow(Window):
         self.yold = event.y
 
     def save_sig(self):
-        self.save_data()
+        self.save()
 
 
 class BeneficiarySignature(SignatureWindow):
@@ -212,17 +228,20 @@ class BeneficiarySignature(SignatureWindow):
         self.label3 = Label(self, text=set_language(lang)[3], font=("bold", 13), bg='white')
         self.label3.place(x=50, y=123)
         self.label4 = Label(self, text=set_language(lang)[4], font=("bold", 13), bg='white')
-        self.label4.place(x=50, y=233) #TODO: ajouter une check boxe pour les conditions + msg d'erreur si pas fait
+        self.label4.place(x=50, y=233)  # TODO: ajouter une check boxe pour les conditions + msg d'erreur si pas fait
         self.label5 = Label(self, text=set_language(lang)[5], font=("bold", 13), bg='white')
         self.label5.place(x=50, y=263)
         self.pack(side="top", fill="both", expand=True)
         self.configure()
 
+    def get_all_entries(self):
+        pass
+
 
 class TechnicianSignature(SignatureWindow):
     def __init__(self, parent, w_number):
         super().__init__(parent, w_number, 'sig_tech.jpg')
-        #TODO: rajouter box précisant si ordi fix ou portable
+        # TODO: rajouter box précisant si ordi fix ou portable
 
         self.nb_PC_label = Label(self, text=set_language(lang)[29])
         self.nb_PC_label.place(x=50, y=13)
@@ -243,6 +262,10 @@ class TechnicianSignature(SignatureWindow):
         self.pack(side="top", fill="both", expand=True)
         self.configure()
 
+    def get_all_entries(self):
+        print(np.array([self.nb_PC.get(), self.nb_screen.get()]))
+        return np.array([self.nb_PC.get(), self.nb_screen.get()])
+
 
 class WelcomeWindow(Window):
     def __init__(self, parent, w_number):
@@ -252,6 +275,9 @@ class WelcomeWindow(Window):
 
         self.language_box = ttk.Combobox(self, values=['Francais', 'English', 'Espagnol', 'Italiano', 'Româna'])
         self.language_box.place(x=self.posx_1stcol, y=50)
+
+    def get_all_entries(self):
+        return np.array([self.language_box.get()])
 
 
 class MainView(Frame):
@@ -315,7 +341,7 @@ class MainView(Frame):
         else:
             self.current_page = self.current_page - 1
             print(self.current_page)
-            #name_window = "w" + str(self.current_page)
+            # name_window = "w" + str(self.current_page)
             current_window = [w for w in self.list_windows if w.number == self.current_page][0]
             print(current_window.number)
             current_window.show()
@@ -324,18 +350,21 @@ class MainView(Frame):
         if self.current_page == 0:
             self.set_language(self.w_welcome.language_box.get())
             print(f'Language choosen: {self.language}')
-            #TODO: top buttons should be inactive while being on w==0
+            # TODO: top buttons should be inactive while being on w==0
 
-        if self.current_page < len(self.list_windows)-1:
+        if self.current_page < len(self.list_windows) - 1:
             self.current_page = self.current_page + 1
             current_window = [w for w in self.list_windows if w.number == self.current_page][0]
             current_window.show()
 
     def save_data(self):
         path_dir = Path(r'C:\Users\rcucu\Documents\Bénévolat\Caritas\code\data')
-        data = pd.DataFrame(data=[self.w1.lastName.get(), self.w1.firstName.get(),
-                                  self.w1.street.get(), self.w1.town.get(), self.w1.phone.get(), self.w1.mail.get()],
-                            columns=list(range(0, 6)))
+        w0 = np.array([])
+        for w in self.list_windows:
+            w0 = np.concatenate((w0, w.get_all_entries()), axis=None)
+
+        w0 = np.array(w0)
+        data = pd.DataFrame(w0[:, None].T, columns=[str(i) for i in range(0, w0.size)])
         print(data.to_string())
 
     def set_language(self, lang):
@@ -343,14 +372,13 @@ class MainView(Frame):
 
 
 if __name__ == '__main__':
-
     path_dir = Path(r'C:\Users\rcucu\Documents\Bénévolat\Caritas\code')
     lang = 'fr'
     app = Tk()
     app.title('UserForm')
     app.wm_geometry('')
 
-    #form.attributes('-fullscreen', 1)  # make the root window fullscreen
+    # form.attributes('-fullscreen', 1)  # make the root window fullscreen
     w_screen = app.winfo_screenwidth()
     h_screen = app.winfo_screenheight()
     main_frame = Frame(app)
@@ -366,4 +394,3 @@ if __name__ == '__main__':
     form.pack(side="top", fill="both", expand=True)
 
     app.mainloop()
-
