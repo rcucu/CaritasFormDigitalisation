@@ -1,6 +1,7 @@
 from os import makedirs, path
 from pathlib import Path
-from tkinter import Frame, Button
+from tkinter import Frame, Button, Label
+from PIL import Image, ImageTk
 
 import numpy as np
 import pandas as pd
@@ -18,6 +19,9 @@ class MainView(Frame):
         self.language = language
         self.current_page = 0
         self.output_path_dir = Path(r'C:\Users\rcucu\Documents\Bénévolat\Caritas\code\data')
+        path_dir = Path(r'C:\Users\rcucu\Documents\Bénévolat\Caritas\BeneficiaryForm')
+        w_screen = self.parent.winfo_screenwidth()
+        h_screen = self.parent.winfo_screenheight()
 
         self.w_welcome = WelcomeWindow(self, w_number=0)
         self.w1 = PersonalDataWindow(self, w_number=1)
@@ -45,7 +49,7 @@ class MainView(Frame):
         b00 = Button(buttonframe, text='Menu', command=self.w_welcome.show, bg='#99EDC3')
         b0 = Button(buttonframe, text='Données Personnelles', command=self.w1.show, bg='#99EDC3')
         b01 = Button(buttonframe, text='Situation Familiale', command=self.w2.show, bg='#99EDC3')
-        b02 = Button(buttonframe, text=set_language(lang)[22], command=self.w3.show, bg='#99EDC3')
+        b02 = Button(buttonframe, text=set_language(self.language)[22], command=self.w3.show, bg='#99EDC3')
         b1 = Button(buttonframe, text="Signature Bénéficiaire", command=self.w22.show, bg='#99EDC3')
         b2 = Button(buttonframe, text="Signature Technicien", command=self.w23.show, bg='#99EDC3')
         b3 = Button(bottombuttonframe, text="Suivant", bg='#3DED97', command=self.go_next_window)

@@ -19,9 +19,9 @@ class SignatureWindow(Window):
         self.drawing_area.bind('<Motion>', self.motion)
         self.drawing_area.bind('<ButtonPress-1>', self.b1down)
         self.drawing_area.bind('<ButtonRelease-1>', self.b1up)
-        self.butt_done = Button(self, text=set_language(lang)[6], width=10, command=self.save, bg='white')
+        self.butt_done = Button(self, text=set_language(self.language)[6], width=10, command=self.save, bg='white')
         self.butt_done.place(x=(self.sizex / 6), y=2.5 * self.sizey + 20)
-        self.butt_erase = Button(self, text=set_language(lang)[7], width=10, command=self.clear, bg='white')
+        self.butt_erase = Button(self, text=set_language(self.language)[7], width=10, command=self.clear, bg='white')
         self.butt_erase.place(x=(self.sizex / 6) + 80, y=2.5 * self.sizey + 20)
 
         self.image = Image.new('RGB', (self.sizex, self.sizey), (255, 255, 255))

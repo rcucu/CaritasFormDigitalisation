@@ -10,20 +10,20 @@ class TechnicianSignature(SignatureWindow):
     def __init__(self, parent, w_number):
         super().__init__(parent, w_number)
 
-        self.nb_PC_label = Label(self, text=set_language(lang)[29])
+        self.nb_PC_label = Label(self, text=set_language(self.language)[29])
         self.nb_PC_label.place(x=50, y=13)
         self.nb_PC = Entry(self)
         self.nb_PC.place(x=50, y=63)
 
-        self.nb_screen_label = Label(self, text=set_language(lang)[30])
+        self.nb_screen_label = Label(self, text=set_language(self.language)[30])
         self.nb_screen_label.place(x=250, y=13)
         self.nb_screen = Entry(self)
         self.nb_screen.place(x=250, y=63)
 
-        label_bs = Label(self, text=set_language(lang)[8], font=("bold", 13), background='white')
+        label_bs = Label(self, text=set_language(self.language)[8], font=("bold", 13), background='white')
         label_bs.place(x=50, y=263)
 
-        button_save_data = Button(self, text=set_language(lang)[31], command=self.get_data, bg='#99EDC3')
+        button_save_data = Button(self, text=set_language(self.language)[31], command=self.get_data, bg='#99EDC3')
         button_save_data.place(x=900, y=500)
 
         self.pack(side="top", fill="both", expand=True)

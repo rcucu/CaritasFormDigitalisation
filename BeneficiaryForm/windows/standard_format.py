@@ -1,6 +1,7 @@
 from datetime import datetime
 from tkinter import Frame, Label, Entry, ttk, Spinbox
-
+from PIL import Image, ImageTk
+from pathlib import Path
 import numpy as np
 
 
@@ -43,7 +44,13 @@ class Window(Frame):
         self.number = w_number
         self.posx_1stcol = 400
         self.posx_1strow = 200
+        self.language = parent.language
+        path_dir = Path(r'C:\Users\rcucu\Documents\Bénévolat\Caritas\BeneficiaryForm')
 
+        w_screen = self.parent.winfo_screenwidth()
+        h_screen = self.parent.winfo_screenheight()
+        img_bgd_ref = Image.open(path_dir / 'img_bkg3.jpg').resize((w_screen, h_screen))
+        img_bgd = ImageTk.PhotoImage(img_bgd_ref)
         bgd_label = Label(self, image=img_bgd)
         bgd_label['anchor'] = 'nw'
         bgd_label.place(x=0, y=0, relwidth=1, relheight=1)
@@ -74,12 +81,12 @@ class Window(Frame):
 class FamilialSituationAgeWindow(Window):
     def __init__(self, parent, w_number):
         super().__init__(parent, w_number)
-        self.familial_label = Label(self, text=set_language(lang)[15])
+        self.familial_label = Label(self, text=set_language(self.language)[15])
         self.familial_label.place(x=self.posx_1stcol, y=self.posx_1strow)
-        self.familial_box = ttk.Combobox(self, values=set_language(lang)[17:22])
+        self.familial_box = ttk.Combobox(self, values=set_language(self.language)[17:22])
         self.familial_box.place(x=self.posx_1stcol, y=self.posx_1strow + 30)
 
-        self.age_label = Label(self, text=set_language(lang)[16])
+        self.age_label = Label(self, text=set_language(self.language)[16])
         self.age_label.place(x=self.posx_1stcol + 300, y=self.posx_1strow)
         self.age_box = Spinbox(self, from_=18, to=110)
         self.age_box.place(x=self.posx_1stcol + 300, y=self.posx_1strow + 30)
@@ -91,29 +98,29 @@ class FamilialSituationAgeWindow(Window):
 class BenefitsWindow(Window):
     def __init__(self, parent, w_number):
         super().__init__(parent, w_number)
-        self.social_benefits_label = Label(self, text=set_language(lang)[22])
+        self.social_benefits_label = Label(self, text=set_language(self.language)[22])
         self.social_benefits_label.place(x=self.posx_1stcol, y=self.posx_1strow)
-        self.social_benefits = ttk.Combobox(self, values=set_language(lang)[23:25])
+        self.social_benefits = ttk.Combobox(self, values=set_language(self.language)[23:25])
         self.social_benefits.place(x=self.posx_1stcol, y=self.posx_1strow + 30)
 
-        self.CSR_lab = Label(self, text=set_language(lang)[25])
+        self.CSR_lab = Label(self, text=set_language(self.language)[25])
         self.CSR_lab.place(x=self.posx_1stcol + 300, y=self.posx_1strow)
         self.CSR_box = ttk.Combobox(self, values=['Vaud', 'Yverdon', 'Neuchatel'])
         self.CSR_box.place(x=self.posx_1stcol + 300, y=self.posx_1strow + 30)
 
-        self.subscrip_year_lab = Label(self, text=set_language(lang)[26])
+        self.subscrip_year_lab = Label(self, text=set_language(self.language)[26])
         self.subscrip_year_lab.place(x=self.posx_1stcol, y=self.posx_1strow + 60)
         self.subscrip_year = Spinbox(self, from_=1970, to=datetime.now().year)
         self.subscrip_year.place(x=self.posx_1stcol, y=self.posx_1strow + 90)
 
-        self.social_assist_label = Label(self, text=set_language(lang)[27])
+        self.social_assist_label = Label(self, text=set_language(self.language)[27])
         self.social_assist_label.place(x=self.posx_1stcol + 300, y=self.posx_1strow + 60)
         self.social_assist = Entry(self)
         self.social_assist.place(x=self.posx_1stcol + 300, y=self.posx_1strow + 90)
 
-        self.it_benefits_label = Label(self, text=set_language(lang)[28])
+        self.it_benefits_label = Label(self, text=set_language(self.language)[28])
         self.it_benefits_label.place(x=self.posx_1stcol, y=self.posx_1strow + 120)
-        self.it_benefits = ttk.Combobox(self, values=set_language(lang)[23:25])
+        self.it_benefits = ttk.Combobox(self, values=set_language(self.language)[23:25])
         self.it_benefits.place(x=self.posx_1stcol, y=self.posx_1strow + 140)
 
     def get_all_entries(self):
@@ -125,17 +132,17 @@ class PersonalDataWindow(Window):
     def __init__(self, parent, w_number):
         super().__init__(parent, w_number)
 
-        self.lastName_lab = Label(self, text=set_language(lang)[9])
+        self.lastName_lab = Label(self, text=set_language(parent.language)[9])
         self.lastName_lab.place(x=self.posx_1stcol, y=self.posx_1strow)
-        self.firstName_lab = Label(self, text=set_language(lang)[10])
+        self.firstName_lab = Label(self, text=set_language(self.language)[10])
         self.firstName_lab.place(x=self.posx_1stcol + 300, y=self.posx_1strow)
-        self.street_lab = Label(self, text=set_language(lang)[11])
+        self.street_lab = Label(self, text=set_language(self.language)[11])
         self.street_lab.place(x=self.posx_1stcol, y=self.posx_1strow + 60)
-        self.town_lab = Label(self, text=set_language(lang)[12])
+        self.town_lab = Label(self, text=set_language(self.language)[12])
         self.town_lab.place(x=self.posx_1stcol + 300, y=self.posx_1strow + 60)
-        self.phone_lab = Label(self, text=set_language(lang)[13])
+        self.phone_lab = Label(self, text=set_language(self.language)[13])
         self.phone_lab.place(x=self.posx_1stcol, y=self.posx_1strow + 120)
-        self.mail_lab = Label(self, text=set_language(lang)[14])
+        self.mail_lab = Label(self, text=set_language(self.language)[14])
         self.mail_lab.place(x=self.posx_1stcol + 300, y=self.posx_1strow + 120)
 
         self.lastName = Entry(self)
