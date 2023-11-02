@@ -45,16 +45,10 @@ class Window(Frame):
         self.posx_1stcol = 400
         self.posx_1strow = 200
         self.language = parent.language
-        path_dir = Path(r'C:\Users\rcucu\Documents\Bénévolat\Caritas\BeneficiaryForm')
-
-        w_screen = self.parent.winfo_screenwidth()
-        h_screen = self.parent.winfo_screenheight()
-        img_bgd_ref = Image.open(path_dir / 'img_bkg3.jpg').resize((w_screen, h_screen))
-        img_bgd = ImageTk.PhotoImage(img_bgd_ref)
-        bgd_label = Label(self, image=img_bgd)
-        bgd_label['anchor'] = 'nw'
-        bgd_label.place(x=0, y=0, relwidth=1, relheight=1)
-        bgd_label.pack(side='top', fill='both', expand=True)
+        self.bgd_img_lab = Label(self, image=parent.img_bgd)
+        self.bgd_img_lab['anchor'] = 'nw'
+        self.bgd_img_lab.place(x=0, y=0, relwidth=1, relheight=1)
+        self.bgd_img_lab.pack(side='top', fill='both', expand=True)
 
     def set_parent_current_page(self):
         self.parent.current_page = self.number
@@ -96,7 +90,7 @@ class FamilialSituationAgeWindow(Window):
 
 
 class BenefitsWindow(Window):
-    def __init__(self, parent, w_number):
+    def __init__(self, parent,  w_number):
         super().__init__(parent, w_number)
         self.social_benefits_label = Label(self, text=set_language(self.language)[22])
         self.social_benefits_label.place(x=self.posx_1stcol, y=self.posx_1strow)
@@ -129,8 +123,8 @@ class BenefitsWindow(Window):
 
 
 class PersonalDataWindow(Window):
-    def __init__(self, parent, w_number):
-        super().__init__(parent, w_number)
+    def __init__(self, parent,   w_number):
+        super().__init__(parent,  w_number)
 
         self.lastName_lab = Label(self, text=set_language(parent.language)[9])
         self.lastName_lab.place(x=self.posx_1stcol, y=self.posx_1strow)
@@ -164,8 +158,8 @@ class PersonalDataWindow(Window):
 
 
 class WelcomeWindow(Window):
-    def __init__(self, parent, w_number):
-        super().__init__(parent, w_number)
+    def __init__(self, parent,  w_number):
+        super().__init__(parent,   w_number)
         self.welcome_label = Label(self, text='Welcome !', font=300)
         self.welcome_label.place(x=self.posx_1stcol, y=100)
 

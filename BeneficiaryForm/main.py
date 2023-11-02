@@ -17,13 +17,13 @@ if __name__ == '__main__':
     h_screen = app.winfo_screenheight()
     main_frame = Frame(app)
 
-    #img_bgd_ref = Image.open(path_dir / 'img_bkg3.jpg').resize((w_screen, h_screen))
-    #img_bgd = ImageTk.PhotoImage(img_bgd_ref)
-    #bgd_label = Label(main_frame, image=img_bgd)
-    #bgd_label['anchor'] = 'nw'
-    #bgd_label.place(x=0, y=0, relwidth=1, relheight=1)
+    img_bgd_ref = Image.open(path_dir / 'img_bkg3.jpg').resize((w_screen, h_screen))
+    img_bgd = ImageTk.PhotoImage(img_bgd_ref)
+    bgd_label = Label(main_frame, image=img_bgd)
+    bgd_label['anchor'] = 'nw'
+    bgd_label.place(x=0, y=0, relwidth=1, relheight=1)
 
-    form = MainView(app, lang)
+    form = MainView(app, lang, img_bgd)
 
     form.pack(side="top", fill="both", expand=True)
 

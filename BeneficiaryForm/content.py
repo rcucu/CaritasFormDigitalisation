@@ -13,22 +13,20 @@ from signature.technician import TechnicianSignature
 
 
 class MainView(Frame):
-    def __init__(self, parent, language, *args, **kwargs):
+    def __init__(self, parent, language, img_bgd, *args, **kwargs):
         super().__init__(parent, padx=1, pady=1, *args, **kwargs)
         self.parent = parent
         self.language = language
+        self.img_bgd = img_bgd
         self.current_page = 0
         self.output_path_dir = Path(r'C:\Users\rcucu\Documents\Bénévolat\Caritas\code\data')
-        path_dir = Path(r'C:\Users\rcucu\Documents\Bénévolat\Caritas\BeneficiaryForm')
-        w_screen = self.parent.winfo_screenwidth()
-        h_screen = self.parent.winfo_screenheight()
 
         self.w_welcome = WelcomeWindow(self, w_number=0)
         self.w1 = PersonalDataWindow(self, w_number=1)
         self.w2 = FamilialSituationAgeWindow(self, w_number=2)
-        self.w3 = BenefitsWindow(self, w_number=3)
+        self.w3 = BenefitsWindow(self,w_number=3)
 
-        self.w22 = BeneficiarySignature(self, w_number=4)
+        self.w22 = BeneficiarySignature(self,w_number=4)
         self.w23 = TechnicianSignature(self, w_number=5)
         self.list_windows = [self.w_welcome, self.w1, self.w2, self.w3, self.w22, self.w23]
 
