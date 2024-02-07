@@ -8,7 +8,7 @@ import pandas as pd
 from data_io.languages import Form
 
 from windows.standard_format import WelcomeWindow, PersonalDataWindow, FamilialSituationAgeWindow, \
-    BenefitsWindow
+    BenefitsWindow, UserWindow, UsageWindow, NeedsWindow
 from signature.beneficiary import BeneficiarySignature
 from signature.technician import TechnicianSignature
 
@@ -19,7 +19,6 @@ class MainView(Frame):
         self.parent = parent
         self.img_bgd = img_bgd
         self.current_page = 0
-        self.form = Form('Francais')
         self.output_path_dir = Path(r'C:\Users\rcucu\Documents\Bénévolat\Caritas\benef_data')
 
         self.w_welcome = WelcomeWindow(self, w_number=0)
@@ -31,15 +30,15 @@ class MainView(Frame):
 
         self.w_welcome.place(in_=self.container, x=0, y=0, relwidth=1, relheight=1)
 
-        b3 = Button(bottombuttonframe, text="Suivant", bg='#3DED97', command=self.go_next_window)
-        b4 = Button(bottombuttonframe, text="En arrière", bg='#3DED97', command=self.go_previous_window)
+        b3 = Button(bottombuttonframe, text="Suivant", bg='#e9967a', command=self.go_next_window)
+        b4 = Button(bottombuttonframe, text="En arrière", bg='#e9967a', command=self.go_previous_window)
 
         b3.pack(side='right')
         b4.pack(side='right')
         self.w_welcome.lift()
         self.language = self.w_welcome.get_language_settings()
         self.form = Form(self.language)
-        self.w1, self.w2, self.w3, self.w22, self.w23 = None, None, None, None, None
+        self.w1, self.w2, self.w3, self.w4, self.w5, self.w6, self.w22, self.w23 = None, None, None, None, None, None, None, None
         self.list_windows = None
 
     def create_other_windows(self):
@@ -48,31 +47,38 @@ class MainView(Frame):
         self.w1 = PersonalDataWindow(self, w_number=1)
         self.w2 = FamilialSituationAgeWindow(self, w_number=2)
         self.w3 = BenefitsWindow(self, w_number=3)
-
-        self.w22 = BeneficiarySignature(self, w_number=4)
-        self.w23 = TechnicianSignature(self, w_number=5)
-        self.list_windows = [self.w_welcome, self.w1, self.w2, self.w3, self.w22, self.w23]
+        self.w4 = UserWindow(self, w_number=4)
+        self.w5 = UsageWindow(self, w_number=5)
+        self.w6 = NeedsWindow(self, w_number=6)
+        self.w22 = BeneficiarySignature(self, w_number=7)
+        self.w23 = TechnicianSignature(self, w_number=8)
+        self.list_windows = [self.w_welcome, self.w1, self.w2, self.w3, self.w4, self.w5, self.w6, self.w22, self.w23]
 
         self.buttonframe = Frame(self, background='white')
         self.buttonframe.pack(side="top", fill="x", expand=False)
 
-        self.w1.place(in_=self.container, x=0, y=0, relwidth=1, relheight=1)
-        self.w2.place(in_=self.container, x=0, y=0, relwidth=1, relheight=1)
-        self.w3.place(in_=self.container, x=0, y=0, relwidth=1, relheight=1)
-        self.w22.place(in_=self.container, x=0, y=0, relwidth=1, relheight=1)
-        self.w23.place(in_=self.container, x=0, y=0, relwidth=1, relheight=1)
+        for window in self.list_windows:
+            window.place(in_=self.container, x=0, y=0, relwidth=1, relheight=1)
 
-        self.b00 = Button(self.buttonframe, text='Menu', command=self.w_welcome.show, bg='#99EDC3')
-        self.b0 = Button(self.buttonframe, text='Données Personnelles', command=self.w1.show, bg='#99EDC3')
-        self.b01 = Button(self.buttonframe, text='Situation Familiale', command=self.w2.show, bg='#99EDC3')
-        self.b02 = Button(self.buttonframe, text='Bénéfices', command=self.w3.show, bg='#99EDC3')
-        self.b1 = Button(self.buttonframe, text="Signature Bénéficiaire", command=self.w22.show, bg='#99EDC3')
-        self.b2 = Button(self.buttonframe, text="Signature Technicien", command=self.w23.show, bg='#99EDC3')
+        color_button = '#ffa07a'
+
+        self.b00 = Button(self.buttonframe, text='Menu', command=self.w_welcome.show, bg=color_button)
+        self.b0 = Button(self.buttonframe, text='Données Personnelles', command=self.w1.show, bg=color_button)
+        self.b01 = Button(self.buttonframe, text='Situation Familiale', command=self.w2.show, bg=color_button)
+        self.b02 = Button(self.buttonframe, text='Bénéfices', command=self.w3.show, bg=color_button)
+        self.b_levelIT = Button(self.buttonframe, text='Niveau informatique', command=self.w4.show,  bg=color_button)
+        self.b_PCusage = Button(self.buttonframe, text='Utilisation PC', command=self.w5.show,  bg=color_button)
+        self.b_needs = Button(self.buttonframe, text='Besoins PC', command=self.w6.show,  bg=color_button)
+        self.b1 = Button(self.buttonframe, text="Signature Bénéficiaire", command=self.w22.show, bg=color_button)
+        self.b2 = Button(self.buttonframe, text="Signature Technicien", command=self.w23.show, bg=color_button)
 
         self.b00.pack(side='left')
         self.b0.pack(side='left')
         self.b01.pack(side='left')
         self.b02.pack(side='left')
+        self.b_levelIT.pack(side='left')
+        self.b_PCusage.pack(side='left')
+        self.b_needs.pack(side='left')
         self.b1.pack(side="left")
         self.b2.pack(side="left")
 
@@ -117,6 +123,9 @@ class MainView(Frame):
                 self.b02.destroy()
                 self.b1.destroy()
                 self.b2.destroy()
+                self.b_levelIT.destroy()
+                self.b_PCusage.destroy()
+                self.b_needs.destroy()
 
             self.create_other_windows()
             # TODO: top buttons should be inactive while being on w==0

@@ -3,16 +3,18 @@ from pathlib import Path
 
 
 def get_shift_in_fields(lang):
-    dict_lang = {'fr': 0,
-                 "en": 1,
-                 "es": 0,
-                 "it": 1,
-                 "de": 0,
-                 "fa": 2,
+    dict_lang = {'Fr': 0,
+                 "En": 1,
+                 "Es": 0,
+                 "It": 1,
+                 "De": 0,
                  "Ук": 1,
-                 "Tü": 0,
-                 '': 0}
-    return dict_lang[lang]
+                 "Tü": 0}#"Fa": 2,
+
+    while dict_lang.get(lang) is None:
+        break
+
+    return dict_lang.get(lang)
 
 
 class Form:

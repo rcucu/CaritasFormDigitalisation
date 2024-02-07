@@ -21,7 +21,7 @@ class TechnicianSignature(SignatureWindow):
                          font=("bold", 13), background='white')
         label_bs.place(x=50, y=263)
 
-        button_save_data = Button(self, text='Sauvegarder données', command=self.get_data, bg='#99EDC3')
+        button_save_data = Button(self, text='Sauvegarder données', command=self.get_data, bg='#f08080')
         button_save_data.place(x=900, y=500)
 
         self.pack(side="top", fill="both", expand=True)

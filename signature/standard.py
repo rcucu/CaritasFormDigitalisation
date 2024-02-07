@@ -9,6 +9,7 @@ from windows.standard_format import Window
 class SignatureWindow(Window):
     def __init__(self, parent, w_number):
         super().__init__(parent, w_number)
+        self.text_form = parent.form
         self.path_dir_save = Path(r'C:\Users\rcucu\Documents\Bénévolat\Caritas\code\data')
         self.posx, self.posy = 50, 300
         self.sizex, self.sizey = 600, 200
@@ -26,6 +27,9 @@ class SignatureWindow(Window):
 
         self.image = Image.new('RGB', (self.sizex, self.sizey), (255, 255, 255))
         self.draw = ImageDraw.Draw(self.image)
+
+    def get_text_label(self, number):
+        return self.text_form.get_field_text(number)
 
     def b1down(self, event):
         self.b1 = 'down'
