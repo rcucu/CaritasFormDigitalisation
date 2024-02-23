@@ -36,13 +36,13 @@ class MainView(Frame):
         b3.pack(side='right')
         b4.pack(side='right')
         self.w_welcome.lift()
-        self.language = self.w_welcome.get_language_settings()
-        self.form = Form(self.language)
+        self.language = 'Fr'
+        self.form = Form('Francais')
         self.w1, self.w2, self.w3, self.w4, self.w5, self.w6, self.w22, self.w23 = None, None, None, None, None, None, None, None
         self.list_windows = None
 
     def create_other_windows(self):
-        #TODO:fix pb with buttonframe that appears at each change of page
+        #TODO:fix pb with buttonframe that appears at the botton of each change of page
 
         self.w1 = PersonalDataWindow(self, w_number=1)
         self.w2 = FamilialSituationAgeWindow(self, w_number=2)
@@ -130,16 +130,21 @@ class MainView(Frame):
             self.create_other_windows()
             # TODO: top buttons should be inactive while being on w==0
 
+        current_window = [w for w in self.list_windows if w.number == self.current_page][0]
+        current_window.check_entry()
+
         if self.current_page < len(self.list_windows) - 1:
             self.current_page = self.current_page + 1
-            current_window = [w for w in self.list_windows if w.number == self.current_page][0]
-            current_window.show()
+            next_window = [w for w in self.list_windows if w.number == self.current_page][0]
+            next_window.show()
 
     def save_signatures(self, output_folder):
         self.w22.save(output_folder / 'sig_beneficiary.jpg')
         self.w23.save(output_folder / 'sig_technician.jpg')
 
     def save_data(self):
+
+        self.w23.check_entry()
 
         name_output_folder = self.output_path_dir / self.w23.nb_PC.get()
 
@@ -155,8 +160,6 @@ class MainView(Frame):
         w0 = np.array(w0)
         data = pd.DataFrame(w0[:, None].T, columns=[str(i) for i in range(0, w0.size)])
         print(data.to_string())
-        # TODO: ne pas laisser l'utilisateur sauvegarder s'il manque le n° de PC,
-        #  checker si champ est vide et lancer une erreur (option '-' si choisi pas de rép)
 
         data.to_csv(name_output_folder / ('data_' + self.w23.nb_PC.get() + '.csv'), sep=',')
 

@@ -1,6 +1,8 @@
+import re
 from datetime import datetime
 from tkinter import Frame, Label, Entry, ttk, Spinbox, IntVar
 import numpy as np
+from data_io.errors import InvalidCharError, InvalidTelNumber, NoElementSelectedError, NoBoxTickedError, InvalidMail
 
 
 # TODO: paragraphe parlant expliquant que par la signature, le bénéficiaire accepte
@@ -18,6 +20,8 @@ class Window(Frame):
         self.bgd_img_lab['anchor'] = 'nw'
         self.bgd_img_lab.place(x=0, y=0, relwidth=1, relheight=1)
         self.bgd_img_lab.pack(side='top', fill='both', expand=True)
+        self.width = parent.winfo_screenwidth()
+        self.height = parent.winfo_screenheight()
 
     def set_parent_current_page(self):
         self.parent.current_page = self.number
@@ -30,20 +34,13 @@ class Window(Frame):
         self.set_parent_current_page()
         self.lift()
 
-        '''
-            try:
-                if self.number == window_number:
-                    self.lift()
-
-            except ValueError:
-                print('This window does not exist')
-
-        '''
-
     def erase(self):
         print('bonjour jefface tout')
         self.pack_forget()
         self.destroy()
+
+    def check_entry(self):
+        pass
 
 
 class FamilialSituationAgeWindow(Window):
@@ -58,7 +55,7 @@ class FamilialSituationAgeWindow(Window):
 
         self.age_label = Label(self, text='Age')  ##TODO: get it from an array in diff. translations or add a col in csv
         self.age_label.place(x=self.posx_1stcol + 300, y=self.posx_1strow)
-        self.age_box = Spinbox(self, from_=18, to=110)
+        self.age_box = Spinbox(self, from_=18, to=90)
         self.age_box.place(x=self.posx_1stcol + 300, y=self.posx_1strow + 30)
 
     def get_all_entries(self):
@@ -67,18 +64,22 @@ class FamilialSituationAgeWindow(Window):
     def get_text_label(self, number):
         return self.text_form.get_field_text(number)
 
+    def check_entry(self):
+        if len(self.familial_box.get()) == 0:
+            raise NoElementSelectedError
+
 
 class BenefitsWindow(Window):
     def __init__(self, parent, w_number):
         super().__init__(parent, w_number)
         self.text_form = parent.form
 
-        self.social_benefits_label = Label(self, text=self.get_text_label('20'))
+        self.social_benefits_label = Label(self, text=self.get_text_label('18'))
         self.social_benefits_label.place(x=self.posx_1stcol, y=self.posx_1strow)
-        self.social_benefits = ttk.Combobox(self, values=[self.get_text_label(str(i)) for i in range(18, 20)])
+        self.social_benefits = ttk.Combobox(self, values=[self.get_text_label(str(i)) for i in range(19, 21)])
         self.social_benefits.place(x=self.posx_1stcol, y=self.posx_1strow + 30)
 
-        self.CSR_lab = Label(self, text=self.get_text_label('19')[-6:])
+        self.CSR_lab = Label(self, text=self.get_text_label('20')[-6:])
         self.CSR_lab.place(x=self.posx_1stcol + 300, y=self.posx_1strow)
         self.CSR_box = ttk.Combobox(self, values=['Vaud', 'Yverdon', 'Neuchatel'])
         self.CSR_box.place(x=self.posx_1stcol + 300, y=self.posx_1strow + 30)
@@ -105,6 +106,13 @@ class BenefitsWindow(Window):
 
     def get_text_label(self, number):
         return self.text_form.get_field_text(number)
+
+    def check_entry(self):
+        if any(len(v) == 0 for v in [self.social_benefits.get(), self.CSR_box.get(), self.it_benefits.get()]):
+            raise NoElementSelectedError
+        elif len(self.social_assist.get()) != 0 and \
+                set('[~!@#$%^&*()_+{}":;\'0123456789]+$').intersection(self.social_assist.get()):
+            raise InvalidCharError
 
 
 class PersonalDataWindow(Window):
@@ -139,17 +147,35 @@ class PersonalDataWindow(Window):
         self.mail.place(x=self.posx_1stcol + 300, y=self.posx_1strow + 150)
 
     def get_all_entries(self):
+
         return np.array([self.lastName.get(), self.firstName.get(), self.street.get(),
                          self.town.get(), self.phone.get(), self.mail.get()])
 
     def get_text_label(self, number):
         return self.text_form.get_field_text(number)
 
+    def check_entry(self):
+        if any(len(v) == 0 for v in [self.lastName.get(), self.firstName.get(), self.street.get(),
+                                     self.town.get(), self.phone.get()]):
+            raise NoElementSelectedError
+
+        elif set('[~!@#$%^&*()_+{}":;\'0123456789]+$').intersection(self.lastName.get()) \
+                or set('[~!@#$%^&*()_+{}":;\'0123456789]+$').intersection(self.firstName.get()):
+            raise InvalidCharError
+
+        #elif not re.match(r'[z0-9]+$', self.phone.get()):
+            # TODO: be more precise/\(?([0-9]{6})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/
+            #raise InvalidTelNumber
+
+        elif len(self.mail.get()) != 0 and not re.match(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$',
+                                                        self.mail.get()):
+            raise InvalidMail
+
 
 class WelcomeWindow(Window):
     def __init__(self, parent, w_number):
         super().__init__(parent, w_number)
-        self.welcome_label = Label(self, text='Welcome !', font=600)
+        self.welcome_label = Label(self, text='Bienvenue !', font=600)
         self.welcome_label.place(x=self.posx_1stcol, y=100)
 
         self.language_box = ttk.Combobox(self, values=['Francais', 'English', 'Espanol', 'Italiano',
@@ -161,6 +187,9 @@ class WelcomeWindow(Window):
 
     def get_language_settings(self):
         return self.language_box.get()
+
+    def check_entry(self):
+        pass
 
 
 class UserWindow(Window):
@@ -183,6 +212,10 @@ class UserWindow(Window):
     def get_all_entries(self):
         return np.array([self.user_box.get(), self.level_it_box.get()])
 
+    def check_entry(self):
+        if any(len(v) == 0 for v in [self.user_box.get(), self.level_it_box.get()]):
+            raise NoElementSelectedError
+
 
 class UsageWindow(Window):
     def __init__(self, parent, w_number):
@@ -197,31 +230,36 @@ class UsageWindow(Window):
         for text in [self.get_text_label(str(i)) for i in list([39, 40, 41, 46, 47, 53, 54])]:
             self.var_checkbox.append(IntVar())
             self.list_checkboxes.append(ttk.Checkbutton(self, text=text, variable=self.var_checkbox[j]))
-            self.list_checkboxes[j].place(x=self.posx_1stcol+300, y=self.posx_1strow + j * 30)
+            self.list_checkboxes[j].place(x=self.posx_1stcol + 300, y=self.posx_1strow + j * 30)
             j += 1
 
         self.var_checkbox.append(IntVar())
         self.com_checkbox = ttk.Checkbutton(self, text=', '.join([self.get_text_label(str(i)) for i in range(42, 45)]),
                                             variable=self.var_checkbox[-1])
         self.list_checkboxes.append(self.com_checkbox)
-        self.list_checkboxes[-1].place(x=self.posx_1stcol+300, y=self.posx_1strow + (len(self.list_checkboxes)-1) * 30)
+        self.list_checkboxes[-1].place(x=self.posx_1stcol + 300,
+                                       y=self.posx_1strow + (len(self.list_checkboxes) - 1) * 30)
 
         self.var_checkbox.append(IntVar())
-        self.multimedia_checkbox = ttk.Checkbutton(self, text=', '.join([self.get_text_label(str(i)) for i in range(48, 50)]),
-                                            variable=self.var_checkbox[-1])
+        self.multimedia_checkbox = ttk.Checkbutton(self,
+                                                   text=', '.join([self.get_text_label(str(i)) for i in range(48, 50)]),
+                                                   variable=self.var_checkbox[-1])
         self.list_checkboxes.append(self.multimedia_checkbox)
-        self.list_checkboxes[-1].place(x=self.posx_1stcol+300, y=self.posx_1strow + (len(self.list_checkboxes)-1) * 30)
+        self.list_checkboxes[-1].place(x=self.posx_1stcol + 300,
+                                       y=self.posx_1strow + (len(self.list_checkboxes) - 1) * 30)
 
         self.var_checkbox.append(IntVar())
-        self.admin_checkbox = ttk.Checkbutton(self, text=', '.join([self.get_text_label(str(i)) for i in range(50, 53)]),
-                                            variable=self.var_checkbox[-1])
+        self.admin_checkbox = ttk.Checkbutton(self,
+                                              text=', '.join([self.get_text_label(str(i)) for i in range(50, 53)]),
+                                              variable=self.var_checkbox[-1])
         self.list_checkboxes.append(self.admin_checkbox)
-        self.list_checkboxes[-1].place(x=self.posx_1stcol+300, y=self.posx_1strow + (len(self.list_checkboxes)-1) * 30)
+        self.list_checkboxes[-1].place(x=self.posx_1stcol + 300,
+                                       y=self.posx_1strow + (len(self.list_checkboxes) - 1) * 30)
 
         self.connexion_lab = Label(self, text=self.get_text_label('56'))
-        self.connexion_lab.place(x=self.posx_1stcol+300, y=self.posx_1strow + (len(self.list_checkboxes)*1.5) * 30)
+        self.connexion_lab.place(x=self.posx_1stcol + 300, y=self.posx_1strow + (len(self.list_checkboxes) * 1.5) * 30)
         self.connexion_box = ttk.Combobox(self, values=[self.get_text_label(str(i)) for i in list([55, 57])])
-        self.connexion_box.place(x=self.posx_1stcol+300, y=self.posx_1strow + (len(self.list_checkboxes)*1.5) * 33)
+        self.connexion_box.place(x=self.posx_1stcol + 300, y=self.posx_1strow + (len(self.list_checkboxes) * 1.5) * 33)
 
     def get_text_label(self, number):
         return self.text_form.get_field_text(str(number))
@@ -229,30 +267,49 @@ class UsageWindow(Window):
     def get_all_entries(self):
         return np.append([[var.get() for var in self.var_checkbox]], [self.connexion_box.get()])
 
+    def check_entry(self):
+        if all(var.get() == 0 for var in self.var_checkbox):
+            raise NoBoxTickedError
+        elif len(self.connexion_box.get()) == 0:
+            raise NoElementSelectedError
+
 
 class NeedsWindow(Window):
     def __init__(self, parent, w_number):
         super().__init__(parent, w_number)
         self.text_form = parent.form
 
-        self.it_needs_lab = Label(self, text=' '.join([self.get_text_label(str(i)) for i in list([60, 63, 66])]))
+        self.it_needs_lab = Label(self, text=' '.join([self.get_text_label(str(i)) for i in list([60, 61, 64])]))
         self.it_needs_lab.place(x=self.posx_1stcol, y=self.posx_1strow)
 
         self.var_checkbox, self.list_checkboxes = [], []
         j = 0
-        for text in [self.get_text_label(str(i)) for i in list([58, 59, 61, 62, 64, 65])]:
+        for text in [self.get_text_label(str(i)) for i in list([58, 59, 62, 63, 65, 67, 68])]:
             self.var_checkbox.append(IntVar())
             self.list_checkboxes.append(ttk.Checkbutton(self, text=text, variable=self.var_checkbox[j]))
-            self.list_checkboxes[j].place(x=self.posx_1stcol+300, y=self.posx_1strow + j * 30)
+            self.list_checkboxes[j].place(x=self.posx_1stcol + 300, y=self.posx_1strow + j * 30)
             j += 1
 
-        self.pb_IT_lab = Label(self, text=' '.join([self.get_text_label(str(i)) for i in list([69, 70])]))
-        self.pb_IT_lab.place(x=self.posx_1stcol+300, y=self.posx_1strow + (len(self.list_checkboxes)*1.5) * 30)
-        self.pb_IT_box = ttk.Combobox(self, values=[self.get_text_label(str(i)) for i in list([67, 68, 71, 73])])
-        self.pb_IT_box.place(x=self.posx_1stcol+300, y=self.posx_1strow + (len(self.list_checkboxes)*1.5) * 33)
+        self.var_checkbox.append(IntVar())
+        self.com_checkbox = ttk.Checkbutton(self, text=', '.join([self.get_text_label(str(i)) for i in list([66])]),
+                                            variable=self.var_checkbox[-1])
+        self.list_checkboxes.append(self.com_checkbox)
+        self.list_checkboxes[-1].place(x=self.posx_1stcol + 300,
+                                       y=self.posx_1strow + (len(self.list_checkboxes) - 1) * 30)
+
+        self.pb_IT_lab = Label(self, text=' '.join([self.get_text_label(str(i)) for i in list([71, 72])]))
+        self.pb_IT_lab.place(x=self.posx_1stcol + 300, y=self.posx_1strow + (len(self.list_checkboxes) * 1.5) * 30)
+        self.pb_IT_box = ttk.Combobox(self, values=[self.get_text_label(str(i)) for i in list([69, 70, 73, 75])])
+        self.pb_IT_box.place(x=self.posx_1stcol + 300, y=self.posx_1strow + (len(self.list_checkboxes) * 1.5) * 33)
 
     def get_text_label(self, number):
         return self.text_form.get_field_text(str(number))
 
     def get_all_entries(self):
         return np.append([[var.get() for var in self.var_checkbox]], [self.pb_IT_box.get()])
+
+    def check_entry(self):
+        if all(var.get() == 0 for var in self.var_checkbox):
+            raise NoBoxTickedError
+        elif len(self.pb_IT_box.get()) == 0:
+            raise NoElementSelectedError

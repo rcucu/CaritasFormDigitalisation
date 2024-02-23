@@ -1,5 +1,6 @@
 import pandas as pd
 from pathlib import Path
+from data_io.errors import NoLanguageError
 
 
 def get_shift_in_fields(lang):
@@ -9,10 +10,10 @@ def get_shift_in_fields(lang):
                  "It": 1,
                  "De": 0,
                  "Ук": 1,
-                 "Tü": 0}#"Fa": 2,
+                 "Tü": 0}#"Fa": 2,#TODO: pb avec eng, de, tu, uk
 
-    while dict_lang.get(lang) is None:
-        break
+    if dict_lang.get(lang) is None:
+        raise NoLanguageError
 
     return dict_lang.get(lang)
 
